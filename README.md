@@ -49,8 +49,20 @@ This service is designed for a distributed microservice architecture and integra
 - Kafka
 - Kubernetes
 
+### API Endpoints
 
+#### Auth
+- (POST)---/auth/register---Register a new user
+- (POST)---/auth/login---Login and receive JWT
+- (POST)---/auth/validate---Validate JWT
 
+#### User
+- (GET)---/user/me---USER---get current user info
+- (GET)---/user/{id}---ADMIN---get user info by its id
+- (PUT)---/user/me---USER---update current user
+- (PUT)---/user/{id}/role---ADMIN---assign role 
+- (DELETE)---/user/me---USER---delete current user
+- (DELETE)---/user/{id}---ADMIN---delete user by its id
 
 
 
