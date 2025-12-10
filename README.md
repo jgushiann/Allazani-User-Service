@@ -46,6 +46,7 @@ This service is designed for a distributed microservice architecture and integra
 - Lombok
 - Docker
 - Bruno
+- REST
 - Kafka
 - Kubernetes
 
