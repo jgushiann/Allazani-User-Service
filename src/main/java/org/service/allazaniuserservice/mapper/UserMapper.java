@@ -9,6 +9,6 @@ import org.service.allazaniuserservice.entity.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserResponseDto toDto(User user);
-    User toEntity(UserResponseDto userDto);
+    User toEntity(UserRequestDto userDto);
     User updateEntity(UserRequestDto dto, @MappingTarget User entity);
 }
