@@ -22,14 +22,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
 
-    /*
-    * Implement this
-    */
     @PostMapping("/auth/login")
     @Operation(summary = "Login and receive JWT")
-    public ResponseEntity<UserResponseDto> loginUser(@Valid @RequestBody UserRequestDto userRequestDto) {
-        //UserResponseDto user = userService.loginUser(userRequestDto);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<String> loginUser(@Valid @RequestBody UserRequestDto userRequestDto) {
+        String message = userService.loginUser(userRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
     /*

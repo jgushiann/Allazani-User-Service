@@ -10,9 +10,16 @@ import org.service.allazaniuserservice.exception.UserAlreadyExistsException;
 import org.service.allazaniuserservice.exception.UserNotFoundException;
 import org.service.allazaniuserservice.mapper.UserMapper;
 import org.service.allazaniuserservice.repository.UserRepository;
+import org.service.allazaniuserservice.security.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -22,6 +29,9 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     public UserResponseDto registerUser(UserRequestDto userRequestDto) {
         if(userRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
@@ -34,6 +44,14 @@ public class UserService implements UserDetailsService {
         User user = userMapper.toEntity(userRequestDto);
         userRepository.save(user);
         return userMapper.toDto(user);
+    }
+
+    public String loginUser(UserRequestDto userRequestDto) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userRequestDto.getUsername(), userRequestDto.getPassword());
+        Authentication authenticationResult = authenticationManager.authenticate(authToken);
+        SecurityContextHolder.getContext().setAuthentication(authenticationResult);
+
+        return jwtUtil.generateToken((UserDetails) authenticationResult.getPrincipal());
     }
 
     public UserResponseDto getUserById(@PathVariable Long id) {
