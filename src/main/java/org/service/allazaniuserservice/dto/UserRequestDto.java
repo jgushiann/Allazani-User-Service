@@ -13,7 +13,6 @@ public class UserRequestDto {
     String lastname;
 
     @Email
-    @NotBlank
     String email;
 
     String password;

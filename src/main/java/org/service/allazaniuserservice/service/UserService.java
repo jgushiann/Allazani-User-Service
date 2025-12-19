@@ -1,8 +1,10 @@
 package org.service.allazaniuserservice.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.service.allazaniuserservice.dto.UserRequestDto;
 import org.service.allazaniuserservice.dto.UserResponseDto;
+import org.service.allazaniuserservice.entity.Role;
 import org.service.allazaniuserservice.entity.User;
 import org.service.allazaniuserservice.exception.UserAlreadyExistsException;
 import org.service.allazaniuserservice.exception.UserNotFoundException;
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +36,19 @@ public class UserService implements UserDetailsService {
         return userMapper.toDto(user);
     }
 
+    public UserResponseDto getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id" + id + " not found"));
+        return userMapper.toDto(user);
+    }
 
-    public UserResponseDto getByUsername(UserRequestDto userRequestDto) {
+    public UserResponseDto getUserByUsername(UserRequestDto userRequestDto) {
         User user = userRepository.findByUsername(userRequestDto.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         return userMapper.toDto(user);
     }
 
-    public UserResponseDto getByEmail(UserRequestDto userRequestDto) {
+    public UserResponseDto getUserByEmail(UserRequestDto userRequestDto) {
         User user = userRepository.findByEmail(userRequestDto.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User with the email not found"));
         return userMapper.toDto(user);
@@ -49,5 +57,21 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+    }
+
+    public UserResponseDto updateRole(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id" + id + " not found"));
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
+        return userMapper.toDto(user);
+    }
+
+    public void deleteCurrentUser(){
+        userRepository.deleteById(0L);
+    }
+
+    public void deleteUser(Long id){
+        userRepository.deleteById(id);
     }
 }
